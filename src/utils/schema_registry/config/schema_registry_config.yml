@@ -1,0 +1,47 @@
+# Schema Registry Configuration
+# Location: config/schema_registry_config.yml
+
+# Database paths
+database_path: "src/utilities/schema_registry/schema_registry.db"
+reports_directory: "src/utilities/schema_registry/schema_reports"
+
+# Auto-versioning settings
+enable_auto_versioning: true
+
+# Version increment rules based on compatibility level
+version_increment_rules:
+  safe: "patch"      # 1.0.0 -> 1.0.1
+  warning: "minor"   # 1.0.0 -> 1.1.0
+  breaking: "major"  # 1.0.0 -> 2.0.0
+
+# Notification configuration for different compatibility levels
+notifications:
+  safe:
+    method: "log"           # "log", "email", "both"
+    level: "info"           # "info", "warning", "error"
+    email: false
+    halt_pipeline: false
+  
+  warning:
+    method: "both"
+    level: "warning"
+    email: true
+    halt_pipeline: false    # Continue with warning
+  
+  breaking:
+    method: "both"
+    level: "error"
+    email: true
+    halt_pipeline: true     # Stop pipeline for breaking changes
+
+# Optional: Environment-specific overrides
+# environments:
+#   development:
+#     notifications:
+#       breaking:
+#         halt_pipeline: false  # More permissive in dev
+#   
+#   production:
+#     notifications:
+#       warning:
+#         halt_pipeline: true   # Stricter in production

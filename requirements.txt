@@ -1,0 +1,74 @@
+# Core database and data pipeline tools
+duckdb>=0.9.2
+sqlmesh>=0.46.0
+dlt>=0.3.5
+
+# Workflow orchestration (for Prefect integration)
+prefect>=2.10.0
+
+# Data manipulation and analysis
+pandas>=2.1.1
+numpy>=1.26.0
+scipy>=1.10.0
+polars>=0.19.15  # Fast DataFrame library, alternative to pandas
+pyarrow>=14.0.1  # For efficient data interchange
+
+# API and HTTP utilities
+requests>=2.31.0
+requests-cache>=1.1.1
+aiohttp>=3.9.1  # For async HTTP requests
+backoff>=2.2.1  # For exponential backoff retry logic
+tenacity>=8.2.3  # Retry library
+
+# Configuration and environment management
+python-dotenv>=1.0.0
+pyyaml>=6.0.1
+toml>=0.10.2 # alternative library for handling API secrets
+
+# File system and path handling
+pathlib>=1.0.1
+fsspec>=2023.10.0  # Filesystem interfaces
+
+# Logging and monitoring
+structlog>=23.2.0  # Structured logging
+python-json-logger>=2.0.7
+
+# Data validation and testing
+great-expectations>=0.17.19  # Data validation framework
+pydantic>=2.5.2  # Data validation using Python type annotations
+
+# Code quality and linting
+flake8>=6.1.0
+black>=23.11.0  # Code formatter
+isort>=5.12.0  # Import sorter
+mypy>=1.7.1  # Type checking
+coverage>=7.0.0 # Coverage reporting
+
+# Testing
+pytest>=7.4.3
+pytest-cov>=4.1.0
+pytest-mock>=3.10.0
+pytest-xdist>=3.0.0
+factory-boy>=3.2.0 # enables custom objects rather than generating exhaustive list of fixtures for edge case testing
+Faker>=18.0.0 # generate mock data
+
+# Utilities
+xxhash>=3.4.1  # Fast hashing algorithm for surrogate keys
+tqdm>=4.66.1  # Progress bars
+python-dateutil>=2.8.2
+
+# Jupyter notebooks
+jupyter>=1.0.0
+notebook>=7.0.6
+ipykernel>=6.26.0
+matplotlib>=3.8.2
+seaborn>=0.13.0
+plotly>=5.18.0
+Openpyxl
+
+# Documentation
+mkdocs>=1.5.3
+mkdocs-material>=9.4.8
+
+# Development tools
+pre-commit>=3.5.0
