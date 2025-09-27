@@ -116,7 +116,7 @@ class PayloadValidator:
             if not response.raw_data:
                 return False
             
-            # Basic structure validation - should have some recognizable content
+            # Basic structure validation - should have some recognisable content
             # Look for common API response patterns
             has_results = any(key in response.raw_data for key in [
                 'search-results', 'results', 'data', 'response', 'entries'

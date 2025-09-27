@@ -64,7 +64,7 @@ class HTTPClient:
             self.headers['X-API-Key'] = credentials['api_key']
             
         elif auth_type == 'bearer_token':
-            self.headers['Authorization'] = f"Bearer {credentials['token']}"
+            self.headers['Authorisation'] = f"Bearer {credentials['token']}"
             
         elif auth_type == 'api_key_and_token':
             # Scopus-style authentication

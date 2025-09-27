@@ -33,9 +33,9 @@ class TestHTTPClient:
         assert 'X-API-Key' in http_client.headers
         assert http_client.headers['X-API-Key'] == 'test_api_key_123'
     
-    def test_authenticate_with_bearer_token_sets_authorization_header(self):
+    def test_authenticate_with_bearer_token_sets_authorisation_header(self):
         """
-        Test that bearer token authentication sets Authorization header
+        Test that bearer token authentication sets Authorisation header
         """
         # Arrange
         credentials = {
@@ -48,8 +48,8 @@ class TestHTTPClient:
         http_client.authenticate(credentials)
         
         # Assert
-        assert 'Authorization' in http_client.headers
-        assert http_client.headers['Authorization'] == 'Bearer bearer_token_abc123'
+        assert 'Authorisation' in http_client.headers
+        assert http_client.headers['Authorisation'] == 'Bearer bearer_token_abc123'
     
     def test_authenticate_with_api_key_and_token_sets_both_headers(self):
         """

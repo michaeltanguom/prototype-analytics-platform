@@ -86,7 +86,7 @@ class CacheManager:
         cache_file = self.cache_dir / f"{cache_key}.cache"
         
         try:
-            # Serialize response data
+            # Serialise response data
             cache_data = {
                 'raw_data': response.raw_data,
                 'metadata': response.metadata,

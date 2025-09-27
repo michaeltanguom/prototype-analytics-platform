@@ -24,7 +24,7 @@ class RateLimitTracker:
             data_source: Name of the API (e.g., 'scopus', 'scival')
             timestamp: When the request was made
         """
-        # Initialize data source if not exists
+        # Initialise data source if not exists
         if data_source not in self._request_log:
             self._request_log[data_source] = []
         
