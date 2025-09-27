@@ -72,7 +72,7 @@ class SchemaRegistry:
                     load_id = extracted_load_id
                     logger.info(f"🔗 Using extracted load_id: {load_id}")
                 else:
-                    logger.warning("⚠️ No load_id provided or extracted - using timestamp-based ID")
+                    logger.warning("No load_id provided or extracted - using timestamp-based ID")
                     load_id = f"AUTO_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
             
             # Step 2: Detect current schema
@@ -93,7 +93,7 @@ class SchemaRegistry:
                 previous_hash = previous_schema['schema_hash_value']
                 
                 if current_hash == previous_hash:
-                    logger.info("✅ Schema unchanged - same hash detected")
+                    logger.info("Schema unchanged - same hash detected")
                     changes['has_changes'] = False
                     changes['detailed_changes'] = []
                 
@@ -132,7 +132,7 @@ class SchemaRegistry:
                     data_source, table_name, new_version, current_schema
                 )
                 current_version = new_version
-                logger.info(f"📋 Created new schema version: {current_version}")
+                logger.info(f"Created new schema version: {current_version}")
             
             # Step 7: Log changes if any
             change_id = None
@@ -147,11 +147,11 @@ class SchemaRegistry:
                 previous_schema, current_schema, load_id, change_id
             )
             
-            logger.info(f"✅ Schema validation completed: {evaluation['overall_compatibility']}")
+            logger.info(f"Schema validation completed: {evaluation['overall_compatibility']}")
             return validation_report
             
         except Exception as e:
-            logger.error(f"❌ Schema validation failed: {e}")
+            logger.error(f"Schema validation failed: {e}")
             raise SchemaRegistryException(f"Schema validation failed: {e}")
     
     def _detect_current_schema(self, data_source: str, table_name: str) -> Dict[str, Any]:
@@ -408,46 +408,46 @@ class SchemaRegistry:
         schema_info = validation_result['schema_info']
         
         summary = f"""
-🔍 SCHEMA REGISTRY VALIDATION REPORT
+SCHEMA REGISTRY VALIDATION REPORT
 {'='*50}
-📅 Validation Time: {metadata['validation_timestamp']}
-🗄️  Data Source: {metadata['data_source']}
-📊 Table: {metadata['table_name']}
-🔗 Load ID: {metadata.get('load_id', 'Not specified')}
+Validation Time: {metadata['validation_timestamp']}
+Data Source: {metadata['data_source']}
+Table: {metadata['table_name']}
+Load ID: {metadata.get('load_id', 'Not specified')}
 
-📋 SCHEMA INFORMATION:
+SCHEMA INFORMATION:
 {'='*30}
-🆔 Schema ID: {schema_info['schema_id']}
-📌 Version: {schema_info['schema_version']}
-🔢 Hash: {schema_info['schema_hash'][:16]}...
-📊 Columns: {schema_info['column_count']}
-📈 Rows: {schema_info['table_row_count']:,}
+Schema ID: {schema_info['schema_id']}
+Version: {schema_info['schema_version']}
+Hash: {schema_info['schema_hash'][:16]}...
+Columns: {schema_info['column_count']}
+Rows: {schema_info['table_row_count']:,}
 
-🎯 VALIDATION RESULTS:
+VALIDATION RESULTS:
 {'='*30}
-✅ Status: {validation_results['overall_status'].upper()}
-🎬 Action: {validation_results['recommended_action']}
-🔄 Has Changes: {'Yes' if validation_results['has_changes'] else 'No'}
-📊 Total Changes: {validation_results['change_count']}
-⚠️  Breaking Changes: {validation_results['breaking_changes']}
-🚫 Halt Pipeline: {'Yes' if validation_results['should_halt_pipeline'] else 'No'}
+Status: {validation_results['overall_status'].upper()}
+Action: {validation_results['recommended_action']}
+Has Changes: {'Yes' if validation_results['has_changes'] else 'No'}
+Total Changes: {validation_results['change_count']}
+Breaking Changes: {validation_results['breaking_changes']}
+Halt Pipeline: {'Yes' if validation_results['should_halt_pipeline'] else 'No'}
 """
         
         # Add change details if any
         if validation_results['has_changes']:
             changes = validation_result['changes']
             summary += f"""
-📝 CHANGE SUMMARY:
+CHANGE SUMMARY:
 {'='*25}
-➕ Columns Added: {changes['change_summary']['columns_added']}
-➖ Columns Removed: {changes['change_summary']['columns_removed']}
-🔄 Columns Modified: {changes['change_summary']['columns_modified']}
-🔀 Columns Reordered: {changes['change_summary']['columns_reordered']}
+Columns Added: {changes['change_summary']['columns_added']}
+Columns Removed: {changes['change_summary']['columns_removed']}
+Columns Modified: {changes['change_summary']['columns_modified']}
+Columns Reordered: {changes['change_summary']['columns_reordered']}
 """
             
             # Show first few changes
             if changes.get('detailed_changes'):
-                summary += f"\n📋 RECENT CHANGES:\n{'-'*25}\n"
+                summary += f"\nRECENT CHANGES:\n{'-'*25}\n"
                 for i, change in enumerate(changes['detailed_changes'][:3]):
                     summary += f"• {change.get('description', 'Unknown change')}\n"
                 
@@ -456,19 +456,19 @@ class SchemaRegistry:
         
         # Add recommendations
         summary += f"""
-💡 RECOMMENDATIONS:
+RECOMMENDATIONS:
 {'='*25}
 """
         if validation_results['overall_status'] == 'breaking':
-            summary += "🚨 IMMEDIATE ACTION REQUIRED: Breaking changes detected\n"
+            summary += "IMMEDIATE ACTION REQUIRED: Breaking changes detected\n"
             summary += "   - Review changes before proceeding\n"
             summary += "   - Consider rollback if data integrity at risk\n"
         elif validation_results['overall_status'] == 'warning':
-            summary += "⚠️  REVIEW RECOMMENDED: Warning-level changes detected\n"
+            summary += "REVIEW RECOMMENDED: Warning-level changes detected\n"
             summary += "   - Monitor for downstream impacts\n"
             summary += "   - Update documentation as needed\n"
         else:
-            summary += "✅ PROCEED: Schema changes are compatible\n"
+            summary += "PROCEED: Schema changes are compatible\n"
             summary += "   - Safe to continue pipeline\n"
         
         return summary

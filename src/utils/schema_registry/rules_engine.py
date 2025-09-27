@@ -24,7 +24,7 @@ class CompatibilityRulesEngine:
             self._rule_cache = {rule['rule_id']: rule for rule in rules}
             logger.info(f"📋 Loaded {len(self._rule_cache)} compatibility rules")
         except Exception as e:
-            logger.error(f"❌ Failed to load compatibility rules: {e}")
+            logger.error(f"Failed to load compatibility rules: {e}")
             self._rule_cache = {}
     
     def evaluate_changes(self, changes: Dict[str, Any]) -> Dict[str, Any]:
@@ -269,10 +269,10 @@ class CompatibilityRulesEngine:
         try:
             rule_id = self.schema_db.add_compatibility_rule(rule_data)
             self._load_rules()  # Reload rules cache
-            logger.info(f"➕ Added custom rule: {rule_id}")
+            logger.info(f"Added custom rule: {rule_id}")
             return rule_id
         except Exception as e:
-            logger.error(f"❌ Failed to add custom rule: {e}")
+            logger.error(f"Failed to add custom rule: {e}")
             raise
     
     def get_rule_recommendations(self, changes: Dict[str, Any]) -> List[Dict[str, Any]]:

@@ -51,10 +51,10 @@ class SchemaValidationRunner:
             config_manager = ConfigManager(self.config_path)
             self.schema_registry_db_path = config_manager.config.database_path
         
-        logger.info(f"🔧 Initialising schema registry runner")
-        logger.info(f"📄 Config: {self.config_path}")
-        logger.info(f"🗄️  Data DB: {self.data_db_path}")
-        logger.info(f"📋 Schema Registry DB: {self.schema_registry_db_path}")
+        logger.info(f"Initialising schema registry runner")
+        logger.info(f"Config: {self.config_path}")
+        logger.info(f"Data DB: {self.data_db_path}")
+        logger.info(f"Schema Registry DB: {self.schema_registry_db_path}")
         
         self.schema_registry = SchemaRegistry(
             db_path=self.schema_registry_db_path,
@@ -95,7 +95,7 @@ class SchemaValidationRunner:
                 summary = self.schema_registry.create_summary_report(validation_report)
                 print(summary)
             
-            logger.info(f"✅ Schema validation completed: {overall_status}")
+            logger.info(f"Schema validation completed: {overall_status}")
             
             if save_report and report_file_path:
                 logger.info(f"📄 Report saved to: {report_file_path}")
@@ -103,7 +103,7 @@ class SchemaValidationRunner:
             return overall_status, report_file_path or ""
             
         except Exception as e:
-            logger.error(f"❌ Schema validation failed: {e}")
+            logger.error(f"Schema validation failed: {e}")
             raise
     
     def register_initial_schema(self, data_source: str, table_name: str,
@@ -118,16 +118,16 @@ class SchemaValidationRunner:
             if save_report:
                 report_file_path = self.schema_registry.save_validation_report(validation_report)
             
-            logger.info(f"✅ Initial schema registered successfully")
+            logger.info(f"Initial schema registered successfully")
             return "registered", report_file_path or ""
             
         except Exception as e:
-            logger.error(f"❌ Initial schema registration failed: {e}")
+            logger.error(f"Initial schema registration failed: {e}")
             raise
     
     def get_schema_history(self, data_source: str, table_name: str, limit: int = 10) -> None:
         """Display schema history for a table"""
-        logger.info(f"📊 Retrieving schema history for {data_source}.{table_name}")
+        logger.info(f"Retrieving schema history for {data_source}.{table_name}")
         
         try:
             history = self.schema_registry.get_schema_history(data_source, table_name, limit)
@@ -136,7 +136,7 @@ class SchemaValidationRunner:
                 print(f"No schema history found for {data_source}.{table_name}")
                 return
             
-            print(f"\n📊 SCHEMA HISTORY: {data_source}.{table_name}")
+            print(f"\nSCHEMA HISTORY: {data_source}.{table_name}")
             print("=" * 60)
             
             for i, version in enumerate(history):
@@ -148,12 +148,12 @@ class SchemaValidationRunner:
                 print(f"   Current: {'Yes' if version['is_current'] else 'No'}")
             
         except Exception as e:
-            logger.error(f"❌ Failed to retrieve schema history: {e}")
+            logger.error(f"Failed to retrieve schema history: {e}")
             raise
     
     def get_recent_changes(self, data_source: str = None, limit: int = 20) -> None:
         """Display recent schema changes"""
-        logger.info(f"📈 Retrieving recent schema changes")
+        logger.info(f"Retrieving recent schema changes")
         
         try:
             changes = self.schema_registry.get_recent_changes(data_source, limit)
@@ -162,7 +162,7 @@ class SchemaValidationRunner:
                 print("No recent schema changes found")
                 return
             
-            print(f"\n📈 RECENT SCHEMA CHANGES")
+            print(f"\nRECENT SCHEMA CHANGES")
             if data_source:
                 print(f"Data Source: {data_source}")
             print("=" * 60)
@@ -178,7 +178,7 @@ class SchemaValidationRunner:
                     print(f"   Load ID: {change['load_id']}")
             
         except Exception as e:
-            logger.error(f"❌ Failed to retrieve recent changes: {e}")
+            logger.error(f"Failed to retrieve recent changes: {e}")
             raise
     
     def validate_config(self) -> None:
@@ -199,14 +199,14 @@ class SchemaValidationRunner:
                 print(f"  {rule_type}: {count}")
             
             if rules_validation['potential_issues']:
-                print("\n⚠️ Potential Issues:")
+                print("\nPotential Issues:")
                 for issue in rules_validation['potential_issues']:
                     print(f"  - {issue}")
             else:
-                print("\n✅ No configuration issues detected")
+                print("\nNo configuration issues detected")
             
         except Exception as e:
-            logger.error(f"❌ Configuration validation failed: {e}")
+            logger.error(f"Configuration validation failed: {e}")
             raise
 
 
@@ -315,7 +315,7 @@ Examples:
                 print_summary=not args.no_summary
             )
             
-            print(f"\n🎯 Validation Status: {status}")
+            print(f"\nValidation Status: {status}")
             if report_path:
                 print(f"📄 Report: {report_path}")
             
@@ -329,7 +329,7 @@ Examples:
                 table_name=args.table_name,
                 save_report=not args.no_report
             )
-            print(f"\n✅ Schema registration completed")
+            print(f"\nSchema registration completed")
             if report_path:
                 print(f"📄 Report: {report_path}")
         
@@ -343,7 +343,7 @@ Examples:
             runner.validate_config()
         
     except Exception as e:
-        logger.error(f"❌ Command failed: {e}")
+        logger.error(f"Command failed: {e}")
         sys.exit(1)
 
 

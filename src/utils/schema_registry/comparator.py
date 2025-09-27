@@ -78,7 +78,7 @@ class SchemaComparator:
             changes['change_summary']['columns_reordered'] += len(reorder_changes)
             changes['has_changes'] = True
         
-        logger.info(f"📊 Schema comparison complete: {len(changes['detailed_changes'])} changes detected")
+        logger.info(f"Schema comparison complete: {len(changes['detailed_changes'])} changes detected")
         return changes
     
     def _create_column_addition_change(self, col_name: str, column_info: Dict[str, Any]) -> Dict[str, Any]:
