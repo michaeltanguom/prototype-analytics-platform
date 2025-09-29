@@ -1,6 +1,8 @@
 """
 Scopus EtLT Pipeline - takes JSON files and performs transformations, dumping tabular data into staging table
+Run checksum_utility.py to ensure data integrity across transmission
 Run soda_dq.py afterwards for health check on dumped data
+
 """
 
 import json
