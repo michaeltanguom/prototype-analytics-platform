@@ -1,0 +1,101 @@
+# Environment variables are loaded from .env file in api/ root directory
+# Default entity file location: api/data/input/scopus_search_entities.txt
+
+[api]
+name = "scopus_search"
+base_url = "https://api.elsevier.com/content/search/scopus"
+description = "Scopus publication search API"
+
+[authentication]
+type = "api_key"
+# Environment variable names - actual values loaded from api/.env file
+api_key_env = "SCOPUS_API_KEY"
+inst_token_env = "SCOPUS_INST_ID"
+required_headers = ["X-ELS-APIKey", "X-ELS-Insttoken"]
+# Path to .env file relative to config directory
+env_file_path = "../../.env"
+
+[paths]
+# Default paths relative to api/ root directory
+input_directory = "data/input"
+output_directory = "data/output/raw/scopus"
+state_directory = "data/state/scopus"
+manifest_directory = "data/output/manifest"
+cache_directory = "data/cache/scopus"
+log_directory = "logs"
+# Default entity file name pattern
+entity_file_pattern = "{data_source}_entities.txt"
+
+[pagination]
+strategy = "offset_based"
+items_per_page = 25
+max_items_per_page = 200
+start_parameter = "start"
+count_parameter = "count"
+# Default to first page if not specified
+default_start = 0
+
+[rate_limits]
+requests_per_second = 2.0
+weekly_limit = 20000
+# Scopus allows 2 requests per second for authenticated users
+# Weekly limit is generous - actual limits depend on subscription
+
+[retries]
+max_attempts = 3
+backoff_factor = 2.0
+# HTTP status codes that should trigger a retry
+status_codes_to_retry = [429, 500, 502, 503, 504]
+# Scopus-specific: 429 for rate limiting, 5xx for server errors
+timeout_seconds = 30
+
+[default_parameters]
+# Scopus-specific default search parameters
+httpAccept = "application/json"
+sort = "relevancy"
+# Include full record data
+view = "COMPLETE"
+# Default field selection - can be overridden per request
+field = "doi,title,publicationName,coverDate,creator,affiliation,citedby-count,prism:aggregationType"
+
+[cache]
+enabled = false  # Development only - controlled by CLI flag
+expiration_seconds = 3600
+directory = "scopus_search_cache"
+namespace = "scopus_search"
+
+[response_mapping]
+# Scopus-specific field mappings for extracting data from API responses
+total_results_field = "search-results.opensearch:totalResults"
+items_array_field = "search-results.entry"
+start_index_field = "search-results.opensearch:startIndex"
+items_per_page_field = "search-results.opensearch:itemsPerPage"
+
+[payload_validation]
+# Configurable validation methods - can be enabled/disabled per validation type
+response_completeness = true
+rate_limit_headers = true
+empty_response_detection = true
+json_structure_validation = true
+
+[payload_validation.headers]
+# Scopus-specific response header mappings
+total_results_field = "search-results.opensearch:totalResults"
+rate_limit_remaining = "X-RateLimit-Remaining"
+rate_limit_reset = "X-RateLimit-Reset"
+# Scopus uses these headers for rate limit information
+
+[logging]
+# API-specific log file name - will be created in configured log directory
+log_file_name = "scopus_search_api.log"
+log_level = "INFO"
+# Include request/response details in logs for debugging
+include_request_details = true
+include_response_headers = true
+
+[file_output]
+# Configuration for file naming and storage
+file_prefix = "scopus_search"
+# Files will be named: {file_prefix}_{entity_id}_{page_num}.json
+output_directory = "raw_data/scopus"
+# Relative to project root: api/data/raw_data/scopus/

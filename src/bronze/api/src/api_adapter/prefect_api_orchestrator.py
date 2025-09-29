@@ -19,18 +19,18 @@ from prefect import flow, task, get_run_logger
 from prefect.tasks import task_input_hash
 
 # Add current directory to path for proper imports
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-# Import all the existing components
-from api_adapter import (
-    ConfigLoader, ConfigurationError, EnvironmentError,
-    DatabaseManager, DatabaseConnectionError,
-    StateManager, ProcessingState,
-    ManifestGenerator,
-    RateLimitTracker,
-    FileHasher
-)
-
+from api_adapter.config_loader import ConfigLoader, ConfigurationError, EnvironmentError
+from api_adapter.database_manager import DatabaseManager, DatabaseConnectionError
+from api_adapter.state_manager import StateManager, ProcessingState
+from api_adapter.manifest_generator import ManifestGenerator
+from api_adapter.rate_limit_tracker import RateLimitTracker
+from api_adapter.file_hasher import FileHasher
+from api_adapter.http_client import HTTPClient, APIRequest, APIResponse, PermanentAPIError
+from api_adapter.payload_validator import PayloadValidator
+from api_adapter.pagination_strategy import PaginationFactory
+from api_adapter.cache_manager import CacheManager
 
 # ===================================================================
 # PREFECT TASKS - Individual components converted to tasks
