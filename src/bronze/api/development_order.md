@@ -1,4 +1,4 @@
-For TDD implementation, we should prioritise based on dependencies and foundational components. Here's the logical order:
+For TDD implementation, the refactor process should prioritise based on dependencies and foundational components. Here's the logical order:
 
 Phase 1: Foundation Components (No Dependencies)
 
@@ -28,7 +28,7 @@ ManifestGenerator - Reporting functionality
 
 Phase 6: Orchestration
 
-APIOrchestrator - Depends on all other components
+Orchestration script depends on all other components
 
 This order ensures that:
 

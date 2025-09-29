@@ -2,7 +2,16 @@
 Prefect Orchestration for Generic REST API Adapter
 Converts the APIOrchestrator into Prefect tasks and flows for simplified execution
 
-python prefect_api_orchestrator.py --config configs/scopus_search.toml --entities data/input/scopus_search_entities.txt --run
+To run:
+In a separate terminal window, run:
+'prefect server start'
+
+In another terminal window, from the directory 'prototype-analytics-platform/src/bronze/api/', run:
+python src/api_adapter/prefect_api_orchestrator.py \
+  --config configs/scopus_search.toml \
+  --entities data/input/scopus_search_entities.txt \
+  --run
+
 """
 
 import sys
