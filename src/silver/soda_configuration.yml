@@ -1,0 +1,7 @@
+# configuration.yml
+# Soda Core configuration file for DuckDB connection
+
+data_source scopus_duckdb:
+  type: duckdb
+  path: ./scopus_test.db
+  read_only: true

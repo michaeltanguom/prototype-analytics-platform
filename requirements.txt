@@ -71,4 +71,4 @@ mkdocs>=1.5.3
 mkdocs-material>=9.4.8
 
 # Development tools
-pre-commit>=3.5.0
+pre-commit>=3.5.0>=3.1.5

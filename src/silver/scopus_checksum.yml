@@ -1,0 +1,51 @@
+# Scopus Checksum Configuration
+# =============================
+# Configuration file for data integrity validation between staging and production audit tables
+
+# Metadata about this configuration
+config_metadata:
+  name: "Scopus Audit Data Integrity Check"
+  description: "Validates data integrity for Scopus audit data during ETL transfer"
+  version: "1.0"
+  created_date: "2025-07-04"
+  data_source: "Scopus"
+
+# Database connection details
+databases:
+  source:
+    path: "scopus_test.db"
+    description: "Temporary staging database containing silver_temp_audit table"
+  
+  destination:
+    path: "silver_metadata.db" 
+    description: "Permanent audit data store containing silver_staging_audit table"
+
+# Table configuration
+tables:
+  source_table: "silver_temp_audit"
+  destination_table: "silver_staging_audit"
+
+# Columns to include in checksum calculation
+# These represent the core data payload that should remain unchanged during ETL
+checksum_columns:
+  - "load_id"                # Unique identifier for each ingestion
+  - "query_parameters"       # Input parameters that drove the data collection
+  - "ingest_timestamp"       # When the data was originally captured  
+  - "ingestion_time"         # Processing duration metadata
+  - "payload_files"          # Files processed during ingestion
+
+# Critical columns that should never contain NULL values
+critical_columns:
+  - "load_id"
+
+# Validation settings
+validation_settings:
+  fail_on_empty_table: true
+  fail_on_null_critical_columns: true
+  fail_on_missing_columns: true
+
+# Optional: Alerting configuration (for future implementation)
+alerting:
+  enabled: false
+  email_recipients: []
+  slack_webhook: null

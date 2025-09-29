@@ -1,0 +1,43 @@
+# Altmetric API configuration
+
+# API credentials
+api_key: ${ALTMETRIC_API_KEY}
+
+# API endpoints
+base_url: https://api.altmetric.com/v1/doi
+fetch_url: https://api.altmetric.com/v1/fetch/
+citations_url: https://api.altmetric.com/v1/citations/
+
+# Request parameters
+default_parameters:
+  format: json
+
+# Identifiers supported
+identifiers:
+  - doi
+  - pmid
+  - arxiv
+  - isbn
+  - uri
+
+# Query options
+query:
+  details: true  # Whether to include full details in responses
+  timeframe: 1y  # Default timeframe for historical data
+
+# Rate limiting
+rate_limits:
+  requests_per_second: 1
+  daily_quota: 1000
+  
+# Retry configuration
+retries:
+  max_attempts: 3
+  backoff_factor: 2
+  status_forcelist: [429, 500, 502, 503, 504]
+  
+# Cache configuration
+cache:
+  enabled: true
+  expiration: 86400  # seconds (24 hours)
+  directory: ./data/cache/altmetric

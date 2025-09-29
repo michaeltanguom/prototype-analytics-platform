@@ -1,0 +1,27 @@
+# Database connection parameters
+# Configuration for connecting to different databases
+
+duckdb:
+  bronze:
+    path: ./data/bronze/bronze.db
+    read_only: false
+  
+  silver:
+    path: ./data/silver/silver.db
+    read_only: false
+  
+  gold:
+    path: ./data/gold/gold.db
+    read_only: false
+
+# Connection timeout settings in seconds
+timeouts:
+  connect: 30
+  read: 60
+  write: 60
+
+# Connection pool configuration
+pool:
+  size: 5
+  overflow: 10
+  recycle: 3600  # seconds

@@ -1,0 +1,44 @@
+# checks/scopus_critical_checks.yml
+# Critical checks that must pass for data to be usable
+# Pipeline will stop if these fail
+
+checks for silver_stg_scopus:
+
+  # Data Integrity - Core Identifiers (Pipeline Blocking)
+  - missing_count(load_id) = 0
+  - missing_count(eid) = 0
+  - missing_count(doi) = 0
+  - duplicate_count(doi) = 0
+  - duplicate_count(eid) = 0
+  - missing_count(data_source) = 0
+
+  # Basic Data Availability (Pipeline Blocking)
+  - row_count > 0
+
+  # Schema Compliance (Pipeline Blocking)
+  - schema:
+      fail:
+        when required column missing: [load_id, data_source, eid, title, first_author, journal_name, eissn, journal_volume, publication_date, doi, citations, publishing_format, document_type, author_count, authors, funder_source_id, open_access_flag]
+
+  # Load ID Format Integrity (Must be exact for downstream systems)
+  - min_length(load_id) = 21
+  - max_length(load_id) = 21
+
+  # Data Source Validation (Critical for lineage)
+  - invalid_count(data_source) = 0:
+      valid min length: 17
+      valid max length: 17
+      valid values: ['scopus_search_api']
+
+  # EID Format Validation (Core identifier format)
+  - invalid_count(eid) = 0:
+      valid regex: '^2-s2\.0-[0-9]+$'
+
+  # Essential JSON Fields (Required for downstream processing)
+  - missing_count(author_count) = 0
+  - missing_count(authors) = 0
+
+  # Critical Business Rule - Open Access Flag (Required boolean)
+  - missing_count(open_access_flag) = 0
+  - invalid_count(open_access_flag) = 0:
+      valid values: [true, false]

@@ -1,0 +1,36 @@
+# Scopus API configuration
+
+# API credentials
+api_key: ${SCOPUS_API_KEY}
+institution_token: ${SCOPUS_INST_ID}
+
+# API endpoints
+base_url: https://api.elsevier.com/content/search/scopus
+
+# Request parameters
+default_parameters:
+  view: COMPLETE
+  httpAccept: application/json
+  items_per_page: 25
+
+# Rate limiting
+rate_limits:
+  requests_per_second: 2
+  max_requests_per_minute: 100
+  
+# Retry configuration
+retries:
+  max_attempts: 3
+  backoff_factor: 2
+  status_forcelist: [429, 500, 502, 503, 504]
+  
+# Pagination
+pagination:
+  items_per_page: 25
+  max_pages: 100  # Set to null for unlimited
+  
+# Cache configuration
+cache:
+  enabled: true
+  expiration: 86400  # seconds (24 hours)
+  directory: ./data/cache/scopus

@@ -1,0 +1,49 @@
+# Environment-specific configuration
+# Different settings for development, testing, and production environments
+
+environment: development  # Options: development, testing, production
+
+# Database configuration
+database:
+  development:
+    type: duckdb
+    path: ./data/database/dev.db
+    read_only: false
+  
+  testing:
+    type: duckdb
+    path: ./data/database/test.db
+    read_only: false
+  
+  production:
+    type: duckdb
+    path: ./data/database/prod.db
+    read_only: false
+
+# Logging configuration
+logging:
+  development:
+    level: DEBUG
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    file: logs/dev.log
+  
+  testing:
+    level: INFO
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    file: logs/test.log
+  
+  production:
+    level: WARNING
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    file: logs/prod.log
+
+# API rate limiting (requests per minute)
+rate_limits:
+  development: 
+    default: 30
+  
+  testing:
+    default: 20
+  
+  production:
+    default: 10

@@ -1,0 +1,158 @@
+# checks/scopus_monitoring_checks.yml
+# Warning-level checks for monitoring and trend analysis
+# Used for early warning of data quality drift
+
+checks for silver_stg_scopus:
+
+  # Length Monitoring with Progressive Thresholds
+  - invalid_count(eid):
+      valid min length: 15
+      valid max length: 30
+      warn: when > 0
+      fail: when > 50
+      name: eid_length_monitoring
+
+  - invalid_count(title):
+      valid min length: 20
+      valid max length: 500
+      warn: when > 0
+      fail: when > 100
+      name: title_length_monitoring
+
+  - invalid_count(first_author):
+      valid min length: 3
+      valid max length: 40
+      warn: when > 0
+      fail: when > 20
+      name: first_author_length_monitoring
+
+  - invalid_count(journal_name):
+      valid min length: 3
+      valid max length: 100
+      warn: when > 0
+      fail: when > 30
+      name: journal_name_length_monitoring
+
+  - invalid_count(doi):
+      valid min length: 10
+      valid max length: 100
+      warn: when > 0
+      fail: when > 25
+      name: doi_length_monitoring
+
+  - invalid_count(abstract):
+      valid min length: 100
+      valid max length: 10000
+      warn: when > 0
+      fail: when > 200
+      name: abstract_length_monitoring
+
+  # ISSN/EISSN Monitoring
+  - invalid_count(issn):
+      valid min length: 6
+      valid max length: 15
+      warn: when > 0
+      fail: when > 10
+      name: issn_format_monitoring
+
+  - invalid_count(eissn):
+      valid min length: 6
+      valid max length: 15
+      warn: when > 0
+      fail: when > 10
+      name: eissn_format_monitoring
+
+  # Numeric Range Monitoring
+  - min(journal_volume):
+      warn: when < -100
+      fail: when < -200
+      name: journal_volume_min_monitoring
+
+  - max(journal_volume):
+      warn: when > 1000
+      fail: when > 2000
+      name: journal_volume_max_monitoring
+
+  - min(citations):
+      warn: when < -10
+      fail: when < -100
+      name: citations_min_monitoring
+
+  - max(citations):
+      warn: when > 200000
+      fail: when > 500000
+      name: citations_max_monitoring
+
+  # PubMed ID Range Monitoring
+  - min(pubmed_id):
+      warn: when < 20000000
+      fail: when < 10000000
+      name: pubmed_id_min_monitoring
+
+  - max(pubmed_id):
+      warn: when > 50000000
+      fail: when > 100000000
+      name: pubmed_id_max_monitoring
+
+  # Journal Issue Monitoring
+  - invalid_count(journal_issue):
+      valid min length: 1
+      valid max length: 20
+      warn: when > 0
+      fail: when > 50
+      name: journal_issue_length_monitoring
+
+  # Publishing Format Monitoring
+  - invalid_count(publishing_format):
+      valid min length: 5
+      valid max length: 20
+      warn: when > 0
+      fail: when > 10
+      name: publishing_format_monitoring
+
+  - invalid_count(document_type):
+      valid min length: 4
+      valid max length: 20
+      warn: when > 0
+      fail: when > 15
+      name: document_type_monitoring
+
+  # Funding Field Monitoring
+  - invalid_count(funder_source_id):
+      valid min length: 3
+      valid max length: 25
+      warn: when > 0
+      fail: when > 20
+      name: funder_source_id_monitoring
+
+  - invalid_count(funder_acronym):
+      valid min length: 1
+      valid max length: 20
+      warn: when > 0
+      fail: when > 30
+      name: funder_acronym_monitoring
+
+  - invalid_count(funder_number):
+      valid min length: 3
+      valid max length: 30
+      warn: when > 0
+      fail: when > 25
+      name: funder_number_monitoring
+
+  - invalid_count(funder_name):
+      valid min length: 5
+      valid max length: 150
+      warn: when > 0
+      fail: when > 40
+      name: funder_name_monitoring
+
+  # Duplication Trend Monitoring
+  - duplicate_percent(affiliations):
+      warn: when >= 10
+      fail: when >= 25
+      name: affiliations_duplicate_monitoring
+
+  - duplicate_percent(authors):
+      warn: when >= 10
+      fail: when >= 25
+      name: authors_duplicate_monitoring

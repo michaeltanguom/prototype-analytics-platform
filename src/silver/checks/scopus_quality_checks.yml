@@ -1,0 +1,103 @@
+# checks/scopus_quality_checks.yml
+# Quality checks for important data standards
+# Pipeline continues but quality issues are flagged for investigation
+
+checks for silver_stg_scopus:
+
+  # Research Content Quality (Important but not blocking)
+  - missing_count(title) = 0
+  - missing_count(first_author) = 0
+  - missing_count(journal_name) = 0
+  - missing_count(publication_date) = 0
+  - missing_count(publishing_format) = 0
+  - missing_count(document_type) = 0
+  - missing_count(funder_source_id) = 0
+
+  # Content Duplication (Quality concern)
+  - duplicate_count(title) = 0
+  - duplicate_count(abstract) = 0
+
+  # Format Compliance - Core Fields
+  - invalid_count(title) = 0:
+      valid min length: 41
+      valid max length: 245
+
+  - invalid_count(first_author) = 0:
+      valid min length: 7
+      valid max length: 26
+
+  - invalid_count(journal_name) = 0:
+      valid min length: 5
+      valid max length: 46
+
+  - invalid_count(doi) = 0:
+      valid min length: 18
+      valid max length: 37
+      valid regex: '^10\.[0-9]+/.*'
+
+  # ISSN/EISSN Quality
+  - missing_count(eissn) = 0
+  - invalid_count(issn) = 0:
+      valid min length: 8
+      valid max length: 13
+      valid values: ['01406736', '22138587', '03005771', '10788956', '00280836', '20474873', '00139351', '02636352', '17595002']
+
+  - invalid_count(eissn) = 0:
+      valid min length: 8
+      valid max length: 13
+
+  # Numeric Field Validation
+  - missing_count(journal_volume) = 0
+  - min(journal_volume) >= -55
+  - max(journal_volume) <= 640
+
+  - missing_count(citations) = 0
+  - min(citations) >= 0
+  - max(citations) <= 100000
+
+  # PubMed ID Validation
+  - duplicate_count(pubmed_id) = 0
+  - min(pubmed_id) >= 24446784
+  - max(pubmed_id) <= 40922710
+
+  # Abstract Quality
+  - invalid_count(abstract) = 0:
+      valid min length: 310
+      valid max length: 4181
+
+  # Document Classification
+  - invalid_count(publishing_format) = 0:
+      valid min length: 7
+      valid max length: 12
+      valid values: ['Journal']
+
+  - invalid_count(document_type) = 0:
+      valid min length: 6
+      valid max length: 14
+      valid values: ['Article', 'Erratum', 'Review', 'Letter', 'Retracted']
+
+  # Funding Information Quality
+  - invalid_count(funder_source_id) = 0:
+      valid min length: 5
+      valid max length: 16
+
+  - invalid_count(funder_acronym) = 0:
+      valid min length: 2
+      valid max length: 13
+
+  - invalid_count(funder_number) = 0:
+      valid min length: 6
+      valid max length: 20
+
+  - invalid_count(funder_name) = 0:
+      valid min length: 10
+      valid max length: 61
+
+  # Journal Issue Format
+  - invalid_count(journal_issue) = 0:
+      valid min length: 1
+      valid max length: 10
+
+  # JSON Field Quality
+  - duplicate_percent(affiliations) < 5
+  - duplicate_percent(authors) < 5

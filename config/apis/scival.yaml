@@ -1,0 +1,37 @@
+# SciVal API configuration
+
+# API credentials
+api_key: ${SCOPUS_API_KEY}
+institution_token: ${SCOPUS_INST_ID}
+
+# API endpoints
+base_url: https://api.elsevier.com/analytics/scival
+metrics_url: https://api.elsevier.com/analytics/scival/publication/metrics
+
+# Request parameters
+default_parameters:
+  httpAccept: application/json
+
+# Metrics to retrieve
+metrics:
+  - AuthorCount
+  - CitationCount
+  - FieldWeightedCitationImpact
+  - PaperPercentile
+
+# Rate limiting
+rate_limits:
+  requests_per_second: 1
+  max_requests_per_minute: 50
+  
+# Retry configuration
+retries:
+  max_attempts: 3
+  backoff_factor: 2
+  status_forcelist: [429, 500, 502, 503, 504]
+  
+# Cache configuration
+cache:
+  enabled: true
+  expiration: 604800  # seconds (7 days)
+  directory: ./data/cache/scival
