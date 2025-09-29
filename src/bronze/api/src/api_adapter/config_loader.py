@@ -8,7 +8,6 @@ from pathlib import Path
 from dataclasses import dataclass, field
 from typing import Dict, Any, List
 
-
 class ConfigurationError(Exception):
     """Raised when configuration is invalid or incomplete"""
     pass

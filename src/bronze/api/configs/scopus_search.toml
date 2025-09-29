@@ -7,11 +7,13 @@ base_url = "https://api.elsevier.com/content/search/scopus"
 description = "Scopus publication search API"
 
 [authentication]
-type = "api_key"
+type = "api_key_and_token"  # Changed from "api_key" to match your HTTPClient authentication
+method = "query_params"
 # Environment variable names - actual values loaded from api/.env file
 api_key_env = "SCOPUS_API_KEY"
 inst_token_env = "SCOPUS_INST_ID"
-required_headers = ["X-ELS-APIKey", "X-ELS-Insttoken"]
+api_key_param = "apiKey"
+inst_token_param = "insttoken"
 # Path to .env file relative to config directory
 env_file_path = "../../.env"
 
@@ -27,11 +29,12 @@ log_directory = "logs"
 entity_file_pattern = "{data_source}_entities.txt"
 
 [pagination]
-strategy = "offset_based"
+strategy = "offset_limit"
 items_per_page = 25
 max_items_per_page = 200
-start_parameter = "start"
-count_parameter = "count"
+start_param = "start"  # Fixed: was start_parameter
+count_param = "count"  # Fixed: was count_parameter
+total_results_path = "search-results.opensearch:totalResults"  # Added: required by OffsetLimitPagination
 # Default to first page if not specified
 default_start = 0
 

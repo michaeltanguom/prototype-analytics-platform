@@ -50,29 +50,45 @@ class HTTPClient:
     
     def authenticate(self, credentials: Dict[str, Any]) -> None:
         """
-        Configure authentication headers based on credential type
+        Configure authentication using query parameters or headers
         
         Args:
             credentials: Dictionary containing authentication information
-            
+                        Must include 'type' and optionally 'method' ('query_params' or 'headers')
+                        
         Raises:
             ValueError: If authentication type is not supported
         """
         auth_type = credentials.get('type')
+        auth_method = credentials.get('method', 'query_params')  # Default to query params
         
-        if auth_type == 'api_key':
-            self.headers['X-API-Key'] = credentials['api_key']
-            
-        elif auth_type == 'bearer_token':
-            self.headers['Authorisation'] = f"Bearer {credentials['token']}"
-            
-        elif auth_type == 'api_key_and_token':
-            # Scopus-style authentication
-            self.headers['X-ELS-APIKey'] = credentials['api_key']
-            self.headers['X-ELS-Insttoken'] = credentials['inst_token']
-            
-        else:
+        # Validate auth_type
+        if auth_type not in ['api_key', 'bearer_token', 'api_key_and_token']:
             raise ValueError(f"Unsupported authentication type: {auth_type}")
+        
+        if auth_method == 'headers':
+            # Header-based authentication
+            if auth_type == 'api_key':
+                self.headers['X-API-Key'] = credentials['api_key']
+                
+            elif auth_type == 'bearer_token':
+                self.headers['Authorisation'] = f"Bearer {credentials['token']}"
+                
+            elif auth_type == 'api_key_and_token':
+                # Scopus-style header authentication
+                self.headers['X-ELS-APIKey'] = credentials['api_key']
+                self.headers['X-ELS-Insttoken'] = credentials['inst_token']
+        
+        elif auth_method == 'query_params':
+            # Query parameter authentication - store credentials for later use
+            # These will be added to request parameters in _build_api_request
+            pass  # Credentials stored below
+        
+        else:
+            raise ValueError(f"Unsupported authentication method: {auth_method}. Use 'headers' or 'query_params'")
+        
+        # Store credentials regardless of method for access in request building
+        self.auth_credentials = credentials
     
     def make_request(self, request: APIRequest) -> APIResponse:
         """
@@ -98,6 +114,12 @@ class HTTPClient:
         # Combine authentication headers with request headers
         combined_headers = {**self.headers, **request.headers}
         
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Making {request.method} request to {request.url}")
+        logger.info(f"Combined headers: {list(combined_headers.keys())}")
+        logger.info(f"Auth headers in combined: {[k for k in combined_headers.keys() if 'ELS' in k or 'API' in k]}")
+
         retry_count = 0
         request_timestamp = datetime.now()
         response = None

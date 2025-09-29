@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional
 from datetime import datetime, timezone, timedelta
 import traceback
+from dotenv import load_dotenv
 
 # Prefect imports
 from prefect import flow, task, get_run_logger
@@ -31,6 +32,15 @@ from api_adapter.http_client import HTTPClient, APIRequest, APIResponse, Permane
 from api_adapter.payload_validator import PayloadValidator
 from api_adapter.pagination_strategy import PaginationFactory
 from api_adapter.cache_manager import CacheManager
+
+# Load .env file from api root directory
+api_root = Path(__file__).parent.parent.parent
+env_path = api_root / '.env'
+if env_path.exists():
+    load_dotenv(env_path)
+    print(f"Loaded environment variables from: {env_path}")
+else:
+    print(f"Warning: .env file not found at {env_path}")
 
 # ===================================================================
 # PREFECT TASKS - Individual components converted to tasks
@@ -260,7 +270,7 @@ def check_incomplete_entities(entities: List[str], load_id: str,
     name="process_single_entity",
     description="Process a single entity with complete pagination and state management",
     retries=2,
-    retry_delay_seconds=60  # Wait longer for entity-level retries
+    retry_delay_seconds=60
 )
 def process_single_entity(entity_id: str, config_path: str, load_id: str,
                         api_data_db_path: str, state_db_path: str,
@@ -315,21 +325,22 @@ def process_single_entity(entity_id: str, config_path: str, load_id: str,
         )
         payload_validator = PayloadValidator(config.payload_validation)
         
-        # Authentication
-        credentials = {}
-        if config.authentication['type'] == 'api_key_and_token':
-            credentials = {
-                'type': 'api_key_and_token',
-                'api_key': ConfigLoader.get_environment_value(config.authentication['api_key_env']),
-                'inst_token': ConfigLoader.get_environment_value(config.authentication['inst_token_env'])
-            }
-        elif config.authentication['type'] == 'api_key':
-            credentials = {
-                'type': 'api_key',
-                'api_key': ConfigLoader.get_environment_value(config.authentication['api_key_env'])
-            }
+        # Build credentials dictionary
+        auth_config = config.authentication
+        credentials = {
+            'type': auth_config.get('type'),
+            'method': auth_config.get('method', 'query_params'),
+            'api_key': ConfigLoader.get_environment_value(auth_config['api_key_env'])
+        }
         
+        # Add inst_token if authentication type requires it
+        if auth_config.get('type') == 'api_key_and_token':
+            credentials['inst_token'] = ConfigLoader.get_environment_value(auth_config['inst_token_env'])
+        
+        # Authenticate (stores credentials for query params or sets headers)
         http_client.authenticate(credentials)
+        
+        logger.info(f"Authentication configured with method: {credentials.get('method')}")
         
         # Optional caching
         cache_manager = None
@@ -387,8 +398,8 @@ def process_single_entity(entity_id: str, config_path: str, load_id: str,
                     logger.info(f"No more pages for entity {entity_id}")
                     break
                 
-                # Build API request
-                api_request = _build_api_request(entity_id, page_params, config)
+                # Build API request with authentication in query params
+                api_request = _build_api_request(entity_id, page_params, config, http_client)
                 
                 # Check cache if enabled
                 response = None
@@ -699,28 +710,54 @@ def api_ingestion_flow(config_path: str, entity_file_path: str,
 # UTILITY FUNCTIONS
 # ===================================================================
 
-def _build_api_request(entity_id: str, page_params: Dict[str, Any], config) -> APIRequest:
-    """Build API request object with entity and pagination parameters"""
-    # Build query based on data source
+def _build_api_request(entity_id: str, page_params: Dict[str, Any], 
+                       config, http_client) -> APIRequest:
+    """Build API request with authentication in query params"""
+    
     if config.name == "scopus_search":
         search_query = f"AU-ID({entity_id})"
     else:
         search_query = entity_id
     
-    # Combine default parameters with pagination
+    base_url = config.base_url
+    
+    # Handle default parameters
+    default_params = {}
+    if hasattr(config, 'default_parameters') and config.default_parameters:
+        try:
+            if hasattr(config.default_parameters, 'items'):
+                default_params = dict(config.default_parameters.items())
+        except (TypeError, AttributeError):
+            default_params = {}
+    
+    # Build base params
     params = {
         'query': search_query,
-        **dict(config.default_parameters),
+        **default_params,
         **page_params
     }
     
+    # Add authentication as query params if using query_params method
+    if hasattr(http_client, 'auth_credentials'):
+        creds = http_client.auth_credentials
+        if creds.get('method') == 'query_params':
+            auth_config = config.authentication
+            
+            # Add API key
+            api_key_param = auth_config.get('api_key_param', 'apiKey')
+            params[api_key_param] = creds.get('api_key')
+            
+            # Add inst token if present
+            if 'inst_token' in creds:
+                inst_token_param = auth_config.get('inst_token_param', 'insttoken')
+                params[inst_token_param] = creds.get('inst_token')
+    
     return APIRequest(
-        url=config.base_url,
+        url=base_url,
         parameters=params,
         headers={},
         method="GET"
     )
-
 
 def _extract_items_from_response(response_data: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Safely extract items from response data"""

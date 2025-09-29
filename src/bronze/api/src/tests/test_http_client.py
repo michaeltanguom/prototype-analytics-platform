@@ -71,6 +71,36 @@ class TestHTTPClient:
         assert 'X-ELS-Insttoken' in http_client.headers
         assert http_client.headers['X-ELS-APIKey'] == 'scopus_key_123'
         assert http_client.headers['X-ELS-Insttoken'] == 'institution_token_456'
+
+    def test_authenticate_with_query_params_stores_credentials(self):
+        """Test that query param authentication stores credentials"""
+        credentials = {
+            'type': 'api_key',
+            'method': 'query_params',
+            'api_key': 'test_key_123'
+        }
+        http_client = HTTPClient()
+        
+        http_client.authenticate(credentials)
+        
+        assert hasattr(http_client, 'auth_credentials')
+        assert http_client.auth_credentials == credentials
+        assert len(http_client.headers) == 0  # No headers set for query params
+
+    def test_authenticate_with_query_params_returns_key_and_inst_token(self):
+        """Test Scopus-style query param authentication"""
+        credentials = {
+            'type': 'api_key_and_token',
+            'method': 'query_params',
+            'api_key': 'scopus_key',
+            'inst_token': 'inst_token'
+        }
+        http_client = HTTPClient()
+        
+        http_client.authenticate(credentials)
+        
+        assert http_client.auth_credentials['api_key'] == 'scopus_key'
+        assert http_client.auth_credentials['inst_token'] == 'inst_token'
     
     def test_authenticate_with_unsupported_type_raises_value_error(self):
         """
