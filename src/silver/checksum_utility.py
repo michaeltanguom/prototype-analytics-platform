@@ -1,6 +1,5 @@
 """
 Checksum Utility for Data Integrity Validation
-==============================================
 
 A utility script for generating and comparing checksums of DuckDB tables
 using DuckDB's native hash() function with automatic type casting.

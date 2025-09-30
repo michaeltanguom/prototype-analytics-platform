@@ -1,6 +1,5 @@
 """
 Silver Audit Metadata Dump ETL Pipeline
-==============================================
 
 A simple ETL script for transferring audit data from scopus_test.db (bronze layer temp dump) to silver_metadata.db which forms the metadata layer
 
